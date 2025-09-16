@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Permite a cualquier usuario crear una cuenta en la colección 'users'.
+    match /users/{userId} {
+      allow read, create: if request.auth != null;
+    }
+
+    // Un usuario solo puede leer, escribir, actualizar o borrar
+    // las tareas que le pertenecen.
+    match /tasks/{taskId} {
+      allow read, write: if request.auth.uid == resource.data.userId;
+    }
+  }
+}
